@@ -1,0 +1,72 @@
+name: CI – Pénztárca Backend
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Lint + Integráció tesztek
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB:       penztarca_test
+          POSTGRES_USER:     penztarca_user
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV:      test
+      DATABASE_URL:  postgresql://penztarca_user:testpass@localhost:5432/penztarca_test
+      JWT_SECRET:    ci_jwt_secret_legalabb_32_karakter_hosszu
+      JWT_EXPIRES_IN: 15m
+      PORT:          4000
+      CORS_ORIGIN:   http://localhost:5173
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node.js beállítása
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Függőségek telepítése
+        working-directory: backend
+        run: npm ci
+
+      - name: Adatbázis migráció (tesztkörnyezet)
+        working-directory: backend
+        run: npm run migrate
+
+      - name: Tesztek futtatása
+        working-directory: backend
+        run: npm test -- --coverage
+
+      - name: Teszt lefedettség feltöltése (opcionális)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: backend/coverage/
+
+  build-check:
+    name: Docker build ellenőrzés
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Backend Docker image build
+        run: docker build -t penztarca-backend ./backend

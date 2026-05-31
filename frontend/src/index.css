@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  /* Scrollbar stílus */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+  .dark ::-webkit-scrollbar-thumb { background: #374151; }
+}
+
+@layer components {
+  /* Kártya alap */
+  .card {
+    @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl;
+  }
+
+  /* Input alap */
+  .input {
+    @apply w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700
+           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+           focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent
+           placeholder:text-gray-400 transition;
+  }
+
+  /* Elsődleges gomb */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg
+           bg-brand-400 hover:bg-brand-600 text-white transition active:scale-95;
+  }
+
+  /* Másodlagos / ghost gomb */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg
+           border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300
+           hover:bg-gray-100 dark:hover:bg-gray-800 transition active:scale-95;
+  }
+
+  /* Badge */
+  .badge-income  { @apply text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200; }
+  .badge-expense { @apply text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200; }
+}
