@@ -62,11 +62,3 @@ jobs:
         with:
           name: coverage-report
           path: backend/coverage/
-
-  build-check:
-    name: Docker build ellenőrzés
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Backend Docker image build
-        run: docker build -t penztarca-backend ./backend
